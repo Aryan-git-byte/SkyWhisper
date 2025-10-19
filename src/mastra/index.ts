@@ -11,6 +11,10 @@ import { sharedPostgresStorage } from "./storage";
 import { inngest, inngestServe } from "./inngest";
 import { exampleWorkflow } from "./workflows/exampleWorflow";
 import { exampleAgent } from "./agents/exampleAgent";
+import { celestialVisibilityTool } from "./tools/celestialVisibilityTool";
+import { celestialAgent } from "./agents/celestialAgent";
+import { celestialTelegramWorkflow } from "./workflows/celestialTelegramWorkflow";
+import { registerTelegramTrigger, type TriggerInfoTelegramOnNewMessage } from "../triggers/telegramTriggers";
 
 class ProductionPinoLogger extends MastraLogger {
   protected logger: pino.Logger;
@@ -56,14 +60,14 @@ class ProductionPinoLogger extends MastraLogger {
 export const mastra = new Mastra({
   storage: sharedPostgresStorage,
   // Register your workflows here
-  workflows: {},
+  workflows: { celestialTelegramWorkflow },
   // Register your agents here
-  agents: {},
+  agents: { celestialAgent },
   mcpServers: {
     allTools: new MCPServer({
       name: "allTools",
       version: "1.0.0",
-      tools: {},
+      tools: { celestialVisibilityTool },
     }),
   },
   bundler: {
@@ -126,6 +130,33 @@ export const mastra = new Mastra({
         // 3. Establishing a publish-subscribe system for real-time monitoring
         //    through the workflow:${workflowId}:${runId} channel
       },
+      // Telegram webhook trigger
+      ...registerTelegramTrigger({
+        triggerType: "telegram/message",
+        handler: async (mastra: Mastra, triggerInfo: TriggerInfoTelegramOnNewMessage) => {
+          const logger = mastra.getLogger();
+          logger?.info("📝 [Telegram Trigger] Received message", { triggerInfo });
+          
+          const chatId = triggerInfo.payload.message.chat.id;
+          const message = triggerInfo.params.message;
+          const threadId = `telegram/${chatId}`;
+          
+          logger?.info("📝 [Telegram Trigger] Starting workflow", {
+            chatId,
+            message,
+            threadId,
+          });
+          
+          const run = await mastra.getWorkflow("celestialTelegramWorkflow").createRunAsync();
+          await run.start({
+            inputData: {
+              message,
+              threadId,
+              chatId,
+            },
+          });
+        },
+      }),
     ],
   },
   logger:
