@@ -96,7 +96,5 @@ Remember: Your goal is to help people successfully observe celestial objects by 
     storage: sharedPostgresStorage,
   }),
   
-  // CRITICAL FIX: Disable streaming for AI SDK v4 models
-  // This tells the agent to use generate() instead of stream()
-  enableStreaming: false,
+
 });

@@ -5,8 +5,10 @@ import { celestialAgent } from "../agents/celestialAgent";
 /**
  * Step 1: Use Celestial Agent
  * 
- * This step calls the celestial agent's .generate() method to process
+ * This step calls the celestial agent's .generateLegacy() method to process
  * the user's message and determine what celestial information to provide.
+ * 
+ * NOTE: Using generateLegacy() because OpenRouter DeepSeek is an AI SDK v4 model
  */
 const useCelestialAgent = createStep({
   id: "use-celestial-agent",
@@ -31,8 +33,8 @@ const useCelestialAgent = createStep({
       threadId: inputData.threadId,
     });
     
-    // FIXED: Explicitly use generate() method for non-streaming
-    const result = await celestialAgent.generate(
+    // FIXED: Use generateLegacy() for AI SDK v4 models (OpenRouter)
+    const result = await celestialAgent.generateLegacy(
       [{ role: "user", content: inputData.message }],
       {
         resourceId: "celestial-bot",
@@ -127,7 +129,7 @@ const sendTelegramReply = createStep({
  * Celestial Telegram Workflow
  * 
  * This workflow handles incoming Telegram messages by:
- * 1. Processing the message with the celestial agent (non-streaming)
+ * 1. Processing the message with the celestial agent (non-streaming, AI SDK v4)
  * 2. Sending the agent's response back to Telegram
  * 
  * The workflow is intentionally simple with exactly 2 steps as per architecture requirements.
@@ -135,16 +137,18 @@ const sendTelegramReply = createStep({
 export const celestialTelegramWorkflow = createWorkflow({
   id: "celestial-telegram-workflow",
   description: "Process Telegram messages about celestial visibility",
+  
   inputSchema: z.object({
     message: z.string(),
     threadId: z.string(),
     chatId: z.number(),
   }),
+  
   outputSchema: z.object({
     sent: z.boolean(),
     messageId: z.number().optional(),
   }),
 })
-  .then(useCelestialAgent)
-  .then(sendTelegramReply)
+  .then(useCelestialAgent as any)
+  .then(sendTelegramReply as any)
   .commit();
