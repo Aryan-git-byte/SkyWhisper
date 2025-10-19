@@ -130,6 +130,13 @@ export const mastra = new Mastra({
         // 3. Establishing a publish-subscribe system for real-time monitoring
         //    through the workflow:${workflowId}:${runId} channel
       },
+      {
+        path: "/health",
+        method: "GET",
+        createHandler: async () => {
+          return async (c) => c.json({ status: "ok" });
+      },
+},
       // Telegram webhook trigger
       ...registerTelegramTrigger({
         triggerType: "telegram/message",

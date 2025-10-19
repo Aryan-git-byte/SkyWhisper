@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: celestial-telegram-bot
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node scripts/start-render.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: MASTRA_HIDE_CLOUD_CTA
+        value: "true"
+      - key: PORT
+        value: "10000"
