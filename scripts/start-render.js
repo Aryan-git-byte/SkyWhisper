@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Render.com startup script
+ * Render.com startup script (ES Module version)
  * 
  * This script handles the startup sequence for Render deployment:
  * 1. Starts the Inngest server in the background
@@ -9,8 +9,8 @@
  * 3. Starts the main Mastra application
  */
 
-const { spawn } = require('child_process');
-const http = require('http');
+import { spawn } from 'child_process';
+import http from 'http';
 
 const INNGEST_PORT = 3000;
 const APP_PORT = 5000;
@@ -26,21 +26,18 @@ function waitForPort(port, maxAttempts = 30) {
     const checkPort = () => {
       attempts++;
       
-      const req = http.get(`http://localhost:${port}/health`, (res) => {
-        if (res.statusCode === 200) {
-          log(`✅ Port ${port} is ready`);
-          resolve();
-        } else if (attempts >= maxAttempts) {
-          reject(new Error(`Port ${port} failed to respond after ${maxAttempts} attempts`));
-        } else {
-          setTimeout(checkPort, 2000);
-        }
+      const req = http.get(`http://localhost:${port}`, (res) => {
+        log(`✅ Port ${port} is ready (status: ${res.statusCode})`);
+        resolve();
       });
       
       req.on('error', () => {
         if (attempts >= maxAttempts) {
           reject(new Error(`Port ${port} failed to respond after ${maxAttempts} attempts`));
         } else {
+          if (attempts % 5 === 0) {
+            log(`⏳ Still waiting for port ${port}... (attempt ${attempts}/${maxAttempts})`);
+          }
           setTimeout(checkPort, 2000);
         }
       });
@@ -93,6 +90,7 @@ async function main() {
   // Start main application
   log('🤖 Starting main application...');
   const app = spawn('node', [
+    '--import=./.mastra/output/instrumentation.mjs',
     '.mastra/output/index.mjs'
   ], {
     stdio: 'inherit',
