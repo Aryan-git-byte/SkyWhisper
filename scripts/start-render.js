@@ -13,7 +13,7 @@ import { spawn } from 'child_process';
 import http from 'http';
 
 const INNGEST_PORT = 3000;
-const APP_PORT = 5000;
+const APP_PORT = parseInt(process.env.PORT || "10000");
 
 function log(message) {
   console.log(`[Render Startup] ${message}`);
