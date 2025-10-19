@@ -31,8 +31,8 @@ const useCelestialAgent = createStep({
       threadId: inputData.threadId,
     });
     
-    // ONLY call the agent's generate method - NO other logic
-    const { text } = await celestialAgent.generate(
+    // FIXED: Explicitly use generate() method for non-streaming
+    const result = await celestialAgent.generate(
       [{ role: "user", content: inputData.message }],
       {
         resourceId: "celestial-bot",
@@ -42,11 +42,11 @@ const useCelestialAgent = createStep({
     );
     
     logger?.info('✅ [CelestialWorkflow] Agent generation complete', {
-      responseLength: text.length,
+      responseLength: result.text.length,
     });
     
     return {
-      response: text,
+      response: result.text,
       chatId: inputData.chatId, // Pass through for next step
     };
   },
@@ -127,7 +127,7 @@ const sendTelegramReply = createStep({
  * Celestial Telegram Workflow
  * 
  * This workflow handles incoming Telegram messages by:
- * 1. Processing the message with the celestial agent
+ * 1. Processing the message with the celestial agent (non-streaming)
  * 2. Sending the agent's response back to Telegram
  * 
  * The workflow is intentionally simple with exactly 2 steps as per architecture requirements.
