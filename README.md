@@ -453,8 +453,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Aryan Kumar**
 
 - GitHub: [@Aryan-git-byte](https://github.com/Aryan-git-byte)
-- Telegram: [@YourTelegramHandle](https://t.me/YourTelegramHandle)
-- Email: your.email@example.com
+- Email: aryan17550@gmail.com
 
 ---
 
