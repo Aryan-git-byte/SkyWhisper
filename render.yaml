@@ -17,3 +17,5 @@ services:
         value: "true"
       - key: PORT
         value: "10000"
+      - key: INNGEST_EVENT_KEY
+        sync: false  # This tells Render to use the value from dashboard
