@@ -6,7 +6,7 @@
 
 **Discover what's visible in the night sky, right from your Telegram messenger** 🔭
 
-[![Live Demo](https://img.shields.io/badge/Try%20It-Live%20on%20Telegram-0088cc?style=for-the-badge&logo=telegram)](https://t.me/YOUR_BOT_USERNAME)
+[![Live Demo](https://img.shields.io/badge/Try%20It-Live%20on%20Telegram-0088cc?style=for-the-badge&logo=telegram)](https://t.me/Sky_WhisperBot)
 [![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?style=for-the-badge&logo=render)](https://skywhisper-0fxg.onrender.com)
 
 [![GitHub Stars](https://img.shields.io/github/stars/Aryan-git-byte/SkyWhisper?style=social)](https://github.com/Aryan-git-byte/SkyWhisper/stargazers)
